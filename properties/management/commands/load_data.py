@@ -22,8 +22,7 @@ class Command(BaseCommand):
 
     def read_data(self):
         """
-
-        :return:
+        Reads the data from the land registry and then adds them to the database
         """
         url_month = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-monthly-update.txt"
         url_all = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-complete.txt"
@@ -41,9 +40,9 @@ class Command(BaseCommand):
 
     def parse_object(self, item):
         """
-
-        :param item:
-        :return:
+        Accepts an item that was read from the land registry and parses it as a dict
+        :param item: The transaction from the land register
+        :return: {dict}
         """
         result = {}
         item_ref = {
@@ -66,10 +65,4 @@ class Command(BaseCommand):
             key = item_ref[ind]['key']
             formater = item_ref[ind]['format']
             result[key] = formater(item[ind])
-        # print result
-        # print ""
         return result
-
-  # 0Transaction unique identifier         1Price       2Date of Transfer    3Postcode   4Type  5Old/New6Durat  7PAON / SAON                                           8Street         9Locality          10Town/City      11District               12County              13PPD    Record Status
-['{7696BA9F-BB3E-4A2B-9671-D39DB8EF9105}', '179150',    '2006-09-15 00:00', '"BN2 3LQ"', '"F"', '"N"', '"L"', '"34"',                    '""',                       '"SHANKLIN ROAD"',  '""',           '"BRIGHTON"',   '"BRIGHTON AND HOVE"',  '"BRIGHTON AND HOVE"',  '"A"', '"C"']
-['{29ADD55C-CC72-4BDE-8E2B-CCCD0ADA3BBA}', '73000',     '2006-08-10 00:00', '"S9 1LD"',  '"F"', '"Y"', '"L"', '"CENTURION APARTMENTS',   ' 30"', '"APARTMENT 1"',    '"VAUXHALL ROAD"',  '""',           '"SHEFFIELD"',  '"SHEFFIELD"',          '"SOUTH YORKSHIRE"',    '"A"', '"C"']

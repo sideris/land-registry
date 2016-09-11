@@ -2,11 +2,8 @@ from __future__ import unicode_literals
 
 import ast
 
-from django.db import models
 from django.core import serializers
-
-# Create your models here.
-from django.db import transaction
+from django.db import models, transaction
 
 
 class Property(models.Model):
@@ -37,6 +34,10 @@ class Property(models.Model):
 
     @staticmethod
     def update(params):
+        """
+        Updates the property.
+        :param params:
+        """
         item = Property.objects.filter(post_code=params.get('post_code'),
                                        paon_saon=params.get('paon_saon'),
                                        street=params.get('street')).first()
@@ -49,6 +50,10 @@ class Property(models.Model):
     @staticmethod
     @transaction.atomic
     def add(params):
+        """
+        Adds a new property
+        :param params:
+        """
         item = Property.objects.filter(post_code=params.get('post_code'),
                                        paon_saon=params.get('paon_saon'),
                                        street=params.get('street')).first()
@@ -58,8 +63,6 @@ class Property(models.Model):
         tdate = p_params.pop('transfer_date')
         type_of_update = p_params.pop('type_of_update')
         if item:
-            # what if it is A C A A A (newest to oldest?)
-            # import collections
             last_update = item.transactions.order_by('-transaction_id').first()
             if last_update:
                 if last_update.type_of_update == 'C' and type_of_update == 'A':
@@ -78,6 +81,10 @@ class Property(models.Model):
             t.save()
 
     def to_json(self):
+        """
+        Serializes the item as a dictionary
+        :return: {dict}
+        """
         result = serializers.serialize('json', [self, ])
         result = ast.literal_eval(result)[0]['fields']
         return result
@@ -90,11 +97,15 @@ class Transaction(models.Model):
     transfer_date   = models.DateField(null=False, db_index=True)
     abode           = models.ForeignKey('Property', related_name='transactions')
 
-    # we need these because of the way we read the data (newest to oldest). If we see a C then the next A should be avoided
+    # we need these because of the way we read the data (newest to oldest). If it is C then the next A should be avoided
     transaction_id  = models.IntegerField(null=False)
     type_of_update  = models.CharField(null=False, max_length=1,  choices=UPDATE)
 
     def to_json(self):
+        """
+        Serializes the item as a dictionary
+        :return: {dict}
+        """
         result = serializers.serialize('json', [self, ])
         result = ast.literal_eval(result)[0]['fields']
         return result
