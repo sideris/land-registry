@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 import ast
 
 from django.core import serializers
-from django.db import models, transaction
+from django.db import models, transaction, connection
+from dateutil import parser
+from django.db.models import Count
 
 
 class Property(models.Model):
@@ -80,13 +82,18 @@ class Property(models.Model):
             t = Transaction(price=price, transfer_date=tdate, abode=p, transaction_id=1, type_of_update=type_of_update)
             t.save()
 
-    def to_json(self):
+
+    def to_json(self, transactions=None):
         """
         Serializes the item as a dictionary
         :return: {dict}
         """
         result = serializers.serialize('json', [self, ])
         result = ast.literal_eval(result)[0]['fields']
+        if transactions:
+            result['transactions'] = [i.to_json() for i in transactions]
+        else:
+            result['transactions'] = [i.to_json() for i in self.transactions.all()]
         return result
 
 
@@ -101,6 +108,17 @@ class Transaction(models.Model):
     transaction_id  = models.IntegerField(null=False)
     type_of_update  = models.CharField(null=False, max_length=1,  choices=UPDATE)
 
+    @staticmethod
+    def prices_per_type(postcode, dateranges):
+        result = []
+        low = dateranges['min']
+        high = dateranges['max']
+        props = Property.objects.prefetch_related('transactions').filter(town=postcode).filter(transactions__transfer_date__range=[low, high])
+        for p in props:
+            filtered_transactions = Transaction.objects.filter(abode=p, transfer_date__range=[low, high])
+            result.append(p.to_json(filtered_transactions))
+        return result
+
     def to_json(self):
         """
         Serializes the item as a dictionary
@@ -108,4 +126,5 @@ class Transaction(models.Model):
         """
         result = serializers.serialize('json', [self, ])
         result = ast.literal_eval(result)[0]['fields']
+        result.pop('abode')
         return result

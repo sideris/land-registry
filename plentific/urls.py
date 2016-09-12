@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 # from django.contrib import admin
-from plentific.api.property import setup_app, get_properties
+from plentific.api.property import setup_app, get_property_counts
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^setup/', setup_app),
-    url(r'^properties/', get_properties)
+    url(r'^properties/', get_property_counts)
 ]

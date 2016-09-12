@@ -16,12 +16,20 @@ def setup_app(request):
         ],
         "postcodes" : map(lambda x: x['post_code'], Property.objects.values('post_code').distinct())
     }
+    # for pc in response['postcodes']:
+    #     r = Property.objects.filter(post_code=pc).all()
+    #     if len(r)> 10:
+    #         print len(r), pc
     return json_response(response)
 
 
 @api_view(['GET'])
-def get_properties(request):
+def get_property_counts(request):
     response = []
     request_params = request.GET
-
+    a= Transaction.prices_per_type('LONDON', {'min': '2001-01-01', 'max': '2016-02-01'})
+    for p in a:
+        response.extend(map(lambda x: x['transfer_date'], p['transactions']))
+        print
+    response.sort()
     return json_response(response)
