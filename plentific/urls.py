@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-# from django.contrib import admin
+
 from plentific.api.property import setup_app, get_property_counts
+from properties.views import HomePageView
 
 urlpatterns = [
-    # url(r'^admin/', admin.site.urls),
+    url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^setup/', setup_app),
     url(r'^properties/', get_property_counts)
 ]
