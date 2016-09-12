@@ -26,8 +26,8 @@ def setup_app(request):
 @api_view(['GET'])
 def get_property_counts(request):
     response = []
-    request_params = request.GET
-    a= Transaction.prices_per_type('LONDON', {'min': '2001-01-01', 'max': '2016-02-01'})
+    request_params = request.GET # get the params from here
+    a = Property.list_filtered('LONDON', {'min': '2001-01-01', 'max': '2016-02-01'})
     for p in a:
         response.extend(map(lambda x: x['transfer_date'], p['transactions']))
         print

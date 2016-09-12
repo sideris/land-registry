@@ -82,6 +82,16 @@ class Property(models.Model):
             t = Transaction(price=price, transfer_date=tdate, abode=p, transaction_id=1, type_of_update=type_of_update)
             t.save()
 
+    @staticmethod
+    def list_filtered(postcode, dateranges):
+        result = []
+        low = dateranges['min']
+        high = dateranges['max']
+        props = Property.objects.prefetch_related('transactions').filter(town=postcode).filter(transactions__transfer_date__range=[low, high])
+        for p in props:
+            filtered_transactions = Transaction.objects.filter(abode=p, transfer_date__range=[low, high])
+            result.append(p.to_json(filtered_transactions))
+        return result
 
     def to_json(self, transactions=None):
         """
@@ -107,17 +117,6 @@ class Transaction(models.Model):
     # we need these because of the way we read the data (newest to oldest). If it is C then the next A should be avoided
     transaction_id  = models.IntegerField(null=False)
     type_of_update  = models.CharField(null=False, max_length=1,  choices=UPDATE)
-
-    @staticmethod
-    def prices_per_type(postcode, dateranges):
-        result = []
-        low = dateranges['min']
-        high = dateranges['max']
-        props = Property.objects.prefetch_related('transactions').filter(town=postcode).filter(transactions__transfer_date__range=[low, high])
-        for p in props:
-            filtered_transactions = Transaction.objects.filter(abode=p, transfer_date__range=[low, high])
-            result.append(p.to_json(filtered_transactions))
-        return result
 
     def to_json(self):
         """
