@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_jinja',
     'properties',
     'rest_framework',
 ]
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'plentific.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'webmain.utils.Jinja2',
+        'BACKEND': 'django_jinja.backend.Jinja2',
         'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
         'APP_DIRS': True,
