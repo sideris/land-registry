@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from plentific.api.property import setup_app, get_property_counts
-from properties.views import HomePageView
+from plentific.api.property import setup_app, get_property_list_date_location
+from properties.views import View
 
 urlpatterns = [
-    url(r'^$', HomePageView.as_view(), name='home'),
+    url(r'^$', View.as_view(template_name="../templates/base.html"), name='home'),
+    url(r'^ts/', View.as_view(template_name="../templates/timeseries.html", name="timeseries", title='Timeseries'), name=''),
+    url(r'^brackets/', View.as_view(template_name="../templates/transactions_price.html",
+                                              name="transaction_prices", title='Transactions per bracket'), name=''),
     url(r'^setup/', setup_app),
-    url(r'^properties/', get_property_counts)
+    url(r'^properties/', get_property_list_date_location)
 ]

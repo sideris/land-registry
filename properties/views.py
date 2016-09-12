@@ -2,11 +2,14 @@ from __future__ import absolute_import
 from django.views.generic import TemplateView
 
 
-class HomePageView(TemplateView):
+class View(TemplateView):
 
-    template_name = "../templates/base.html"
+    name = None
+    title = None
 
     def get_context_data(self, **kwargs):
-        context = super(HomePageView, self).get_context_data(**kwargs)
-        context['test'] = 'hai'
+        context = super(View, self).get_context_data(**kwargs)
+        context['container_id'] = 'time_series_view'
+        context['name'] = self.name
+        context['title'] = 'Plentific - ' + self.title
         return context
