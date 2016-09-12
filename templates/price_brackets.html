@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
-	{% block content %}
-		{{ block.super }}
 
-		{{ name }}
-	{% endblock %}
+{% block js_load %}
+	{{ block.super }}
+	{% load static %}
+		<script src="{% static 'js/graphs/price_brackets.js' %}"></script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function(){
+		let graph = new PriceBracketsView('#price_brackets_container', {});
+		graph.call()
+	})
+</script>
+{% endblock %}

@@ -1,3 +1,3 @@
-/**
- * Created by pgsid on 12-Sep-16.
- */
+class PriceBracketsView extends PlentificView {
+
+}
