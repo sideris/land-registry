@@ -5,7 +5,7 @@ from csv import reader
 from dateutil import parser
 from django.core.management import BaseCommand
 
-from properties.models import Property
+from properties.models import Property, Transaction
 
 
 class Command(BaseCommand):
@@ -13,13 +13,14 @@ class Command(BaseCommand):
         super(Command, self).add_arguments(parser)
         parser.add_argument('--clear', default=None, action='store_true', help='Clear previous entries')
         parser.add_argument('--nostore', default=None, action='store_true', help='Clear previous entries')
-        parser.add_argument('--largeds', default=None, action='store_true', help='Use large dataset (3.5GB)')
+        parser.add_argument('--large', default=None, action='store_true', help='Use large dataset (3.5GB)')
 
     def handle(self, *args, **options):
         if options['clear']:
             Property.objects.all().delete()
+            Transaction.objects.all().delete()
         if not options['nostore']:
-            self.read_data(large=options['largeds'])
+            self.read_data(large=options['large'])
 
     def read_data(self, large=False):
         """
@@ -27,9 +28,9 @@ class Command(BaseCommand):
         :param large: Use the large dataset
         """
         url_month = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-monthly-update.txt"
-        url_2016 = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-monthly-update.txt"
+        url_2016 = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-2016.txt"
         url_all = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-complete.txt"
-        data = urllib2.urlopen(url_all if large else url_month)
+        data = urllib2.urlopen(url_all if large else url_2016)
         c = 0
         # v = set()
         for line in reader(data):

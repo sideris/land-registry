@@ -84,6 +84,12 @@ class Property(models.Model):
 
     @staticmethod
     def list_filtered(postcode, dateranges):
+        """
+
+        :param postcode:
+        :param dateranges:
+        :return:
+        """
         result = []
         low = dateranges['min']
         high = dateranges['max']
@@ -100,10 +106,8 @@ class Property(models.Model):
         """
         result = serializers.serialize('json', [self, ])
         result = ast.literal_eval(result)[0]['fields']
-        if transactions:
-            result['transactions'] = [i.to_json() for i in transactions]
-        else:
-            result['transactions'] = [i.to_json() for i in self.transactions.all()]
+        transactions = transactions if transactions else self.transactions.all()
+        result['transactions'] = [i.to_json() for i in transactions]
         return result
 
 
