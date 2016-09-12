@@ -1,17 +1,16 @@
 #!/bin/bash
-echo "Positional Parameters"
-echo '$1 = ' $1
-echo '$2 = ' $2
-echo '$3 = ' $3
 
-#apt-get update
-#apt-get install libpq-dev python-dev --yes
-#
-#pip install virtualenvwrapper
-#
-#export WORKON_HOME=$HOME/.virtualenvs
-#export MSYS_HOME=/c/msys/1.0
-#source /usr/local/bin/virtualenvwrapper
+apt-get update
+apt-get install libpq-dev python-dev --yes
+
+pip install virtualenv virtualenvwrapper
+cp ~/.bashrc ~/.bashrc-org # backup bashrc
+# Be careful with this command
+printf '\n%s\n%s\n%s' '# virtualenv' 'export WORKON_HOME=~/virtualenvs' \
+'source /usr/local/bin/virtualenvwrapper.sh' >> ~/.bashrc
+source ~/.bashrc
+mkdir -p $WORKON_HOME
+
 
 if [ "$1" = "setdb" ]; then
     setup_postgres()
