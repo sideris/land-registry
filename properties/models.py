@@ -56,22 +56,21 @@ class Property(models.Model):
         Adds a new property
         :param params:
         """
-        item = Property.objects.filter(postcode=params.get('postcode'),
-                                       paon_saon=params.get('paon_saon'),
-                                       street=params.get('street')).first()
+        previous = Property.objects.filter(postcode=params.get('postcode'),
+                                           paon_saon=params.get('paon_saon'),
+                                           street=params.get('street')).first()
 
         p_params = dict(params)
-        price           = p_params.pop('price')
-        tdate           = p_params.pop('transfer_date')
-        type_of_update  = p_params.pop('type_of_update')
-        tid             = p_params.pop('tid')
-        if item: # add transaction
-            t = Transaction(price=price, transfer_date=tdate, abode=item, type_of_update=type_of_update, tid=tid)
+        price    = p_params.pop('price')
+        tdate    = p_params.pop('transfer_date')
+        tid      = p_params.pop('tid')
+        if previous:  # add transaction
+            t = Transaction(price=price, transfer_date=tdate, abode=previous, tid=tid)
             t.save()
-        else: # add new property and transaction
+        else:         # add new property and transaction
             p = Property(**p_params)
             p.save()
-            t = Transaction(price=price, transfer_date=tdate, abode=p, transaction_id=1, type_of_update=type_of_update)
+            t = Transaction(price=price, transfer_date=tdate, abode=p, tid=tid)
             t.save()
 
     @staticmethod
