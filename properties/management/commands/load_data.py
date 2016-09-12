@@ -32,19 +32,15 @@ class Command(BaseCommand):
         url_all = "http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-complete.txt"
         data = urllib2.urlopen(url_all if large else url_2016)
         c = 0
-        # v = set()
         for line in reader(data):
             c += 1
-            # v.add(re.sub("[{}]", "", line[0]))
-            if line[-1] != 'D':  # if D skip as we have the latest data. We traverse newest change to oldest
-                corrected = line[0:7] + ["%s %s" % (line[7], line[8])] + line[9:]
-                obj = self.parse_object(corrected)
-                Property.add(obj)
+            corrected = line[0:7] + ["%s %s" % (line[7], line[8])] + line[9:]
+            obj = self.parse_object(corrected)
+            # Property.add(obj)
             if c % 10000 == 0:
                 print('Wrote %ik lines' % (c / 1000))
             # if c == 300: break
         print 'Total %i' % c
-        # print len(v), c
 
     def parse_object(self, item):
         """
@@ -53,7 +49,12 @@ class Command(BaseCommand):
         :return: {dict}
         """
         result = {}
+
+        def fix_id(id_str):
+            return re.sub("[{}]", "", id_str)
+
         item_ref = {
+            0:  {'format': fix_id, 'key': 'tid'},
             1:  {'format': int, 'key': 'price'},
             2:  {'format': parser.parse, 'key': 'transfer_date'},
             3:  {'format': str, 'key': 'postcode'},
@@ -73,4 +74,5 @@ class Command(BaseCommand):
             key = item_ref[ind]['key']
             formater = item_ref[ind]['format']
             result[key] = formater(item[ind])
+        print result
         return result

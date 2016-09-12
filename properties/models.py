@@ -61,22 +61,14 @@ class Property(models.Model):
                                        street=params.get('street')).first()
 
         p_params = dict(params)
-        price = p_params.pop('price')
-        tdate = p_params.pop('transfer_date')
-        type_of_update = p_params.pop('type_of_update')
-        if item:
-            last_update = item.transactions.order_by('-transaction_id').first()
-            if last_update:
-                if last_update.type_of_update == 'C' and type_of_update == 'A':
-                    # Since we go from newest to oldest data the change has been registered
-                    last_update.type_of_update = 'E'
-                    last_update.save()
-                else:
-                    tid = last_update.transaction_id + 1
-                    t = Transaction(price=price, transfer_date=tdate, abode=item, transaction_id=tid,
-                                    type_of_update=type_of_update)
-                    t.save()
-        else:
+        price           = p_params.pop('price')
+        tdate           = p_params.pop('transfer_date')
+        type_of_update  = p_params.pop('type_of_update')
+        tid             = p_params.pop('tid')
+        if item: # add transaction
+            t = Transaction(price=price, transfer_date=tdate, abode=item, type_of_update=type_of_update, tid=tid)
+            t.save()
+        else: # add new property and transaction
             p = Property(**p_params)
             p.save()
             t = Transaction(price=price, transfer_date=tdate, abode=p, transaction_id=1, type_of_update=type_of_update)
@@ -113,15 +105,10 @@ class Property(models.Model):
 
 
 class Transaction(models.Model):
-    UPDATE          = (('C', 'Change'), ('A', 'New sale'), ('E', 'Change evaluated'))
-
+    tid             = models.CharField(null=False, max_length=200, default='', unique=True)  # don't index because of the scope of this project we won't look according to tid
     price           = models.IntegerField(null=False)
     transfer_date   = models.DateField(null=False, db_index=True)
     abode           = models.ForeignKey('Property', related_name='transactions')
-
-    # we need these because of the way we read the data (newest to oldest). If it is C then the next A should be avoided
-    transaction_id  = models.IntegerField(null=False)
-    type_of_update  = models.CharField(null=False, max_length=1,  choices=UPDATE)
 
     def to_json(self):
         """
