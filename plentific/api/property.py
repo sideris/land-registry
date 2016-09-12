@@ -25,7 +25,7 @@ def setup_app(request):
 
 
 @api_view(['GET'])
-def get_property_counts(request):
+def get_property_list_date_location(request):
     params = request.GET
     pc          = params.get('postcode', None)  # support only postcodes for now
     from_date   = params.get('from', None)

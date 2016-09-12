@@ -36,7 +36,7 @@ class Command(BaseCommand):
             c += 1
             corrected = line[0:7] + ["%s %s" % (line[7], line[8])] + line[9:]
             obj = self.parse_object(corrected)
-            # Property.add(obj)
+            Property.add(obj)
             if c % 10000 == 0:
                 print('Wrote %ik lines' % (c / 1000))
             # if c == 300: break
@@ -68,11 +68,9 @@ class Command(BaseCommand):
             11: {'format': str, 'key': 'district'},
             12: {'format': str, 'key': 'county'},
             13: {'format': str, 'key': 'ppd'},
-            14: {'format': str, 'key': 'type_of_update'},
         }
         for ind in item_ref:
             key = item_ref[ind]['key']
             formater = item_ref[ind]['format']
             result[key] = formater(item[ind])
-        print result
         return result
