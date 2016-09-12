@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Plentific</title>
+	<title>{{ title }}</title>
 	{% load static %}
 	<link rel="stylesheet" type="text/css" href="{% static 'css/lib/bootstrap.min.css' %}">
 </head>
 <body>
 <div id="container">
 	{% block content %}
-		<div class="svg-container">
+		<div class="svg-container" id="{{ id }}">
 		</div>
 	{% endblock %}
 </div>
