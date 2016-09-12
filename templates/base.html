@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>$Title$</title>
+	<title>Plentific</title>
+	<link rel="stylesheet" type="text/css" href="{{ static('/css/lib/bootstrap.min.css') }}">
 </head>
 <body>
-$END$
+	<div id="container">
+		{% block content %}
+			<div class="svg-container">
+
+			</div>
+		{% endblock %}
+	</div>
 </body>
+{% block js_load %}
+	<script src="{{ static('js/lib/bootstrap.min.js') }}"></script>
+	<script src="{{ static('js/lib/d3.min.js') }}"></script>
+	<script src="{{ static('js/lib/jquery-3.1.0.min.js') }}"></script>
+{% endblock %}
 </html>
