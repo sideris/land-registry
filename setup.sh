@@ -2,8 +2,11 @@
 
 apt-get update
 apt-get install libpq-dev python-dev --yes
+apt-get install python-pip --yes
 
 pip install virtualenv virtualenvwrapper
+pip install --upgrade pip
+
 cp ~/.bashrc ~/.bashrc-org # backup bashrc
 # Be careful with this command
 printf '\n%s\n%s\n%s' '# virtualenv' 'export WORKON_HOME=~/virtualenvs' \
@@ -32,7 +35,7 @@ function setup_postgres
     sudo -u postgres psql postgres
     \password postgres
     test
-    psql
+    test
     create database plentific;
     \q
 
