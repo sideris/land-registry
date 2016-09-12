@@ -42,7 +42,7 @@ class Command(BaseCommand):
             if c % 10000 == 0:
                 print('Wrote %ik lines' % (c / 1000))
             # if c == 300: break
-        print c
+        print 'Total %i' % c
         # print len(v), c
 
     def parse_object(self, item):
@@ -55,7 +55,7 @@ class Command(BaseCommand):
         item_ref = {
             1:  {'format': int, 'key': 'price'},
             2:  {'format': parser.parse, 'key': 'transfer_date'},
-            3:  {'format': str, 'key': 'post_code'},
+            3:  {'format': str, 'key': 'postcode'},
             4:  {'format': str, 'key': 'property_type'},
             5:  {'format': str, 'key': 'age'},
             6:  {'format': str, 'key': 'duration'},

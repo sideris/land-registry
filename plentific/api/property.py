@@ -1,4 +1,5 @@
 from django.db.models import Max, Min
+from django.http import HttpResponse
 from django.views.decorators.gzip import gzip_page
 from rest_framework.decorators import api_view
 
@@ -25,11 +26,13 @@ def setup_app(request):
 
 @api_view(['GET'])
 def get_property_counts(request):
-    response = []
-    request_params = request.GET # get the params from here
-    a = Property.list_filtered('LONDON', {'min': '2001-01-01', 'max': '2016-02-01'})
-    for p in a:
-        response.extend(map(lambda x: x['transfer_date'], p['transactions']))
-        print
-    response.sort()
-    return json_response(response)
+    params = request.GET
+    pc          = params.get('postcode', None)  # support only postcodes for now
+    from_date   = params.get('from', None)
+    to_date     = params.get('to', None)
+    if not (pc or from_date or to_date):
+        return HttpResponse(status=418)
+
+    result = Property.list_filtered(pc, {'min': from_date, 'max': to_date})
+    print result
+    return json_response(result)

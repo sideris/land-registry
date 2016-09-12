@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Property',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('post_code', models.CharField(db_index=True, max_length=12)),
+                ('postcode', models.CharField(db_index=True, max_length=20)),
                 ('property_type', models.CharField(choices=[('D', 'Detached'), ('S', 'Semi - Detached'), ('T', 'Terraced'), ('F', 'Flats / Maisonettes'), ('O', 'Other')], max_length=1)),
                 ('age', models.CharField(choices=[('Y', 'Yearly new built'), ('N', 'Established residential building')], max_length=1)),
                 ('duration', models.CharField(choices=[('F', 'Freehold'), ('N', 'Leasehold')], max_length=1)),
@@ -44,6 +44,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='property',
-            unique_together=set([('post_code', 'paon_saon', 'street')]),
+            unique_together=set([('postcode', 'paon_saon', 'street')]),
         ),
     ]

@@ -10,7 +10,7 @@ from django.db.models import Count
 
 class Property(models.Model):
     class Meta:
-        unique_together = ('post_code', 'paon_saon', 'street')
+        unique_together = ('postcode', 'paon_saon', 'street')
     PROPERTY_TYPE = (
         ('D', 'Detached'),
         ('S', 'Semi - Detached'),
@@ -22,7 +22,7 @@ class Property(models.Model):
     DURATION     = (('F', 'Freehold'), ('N', 'Leasehold'))
     PPD_CATEGORY = (('A', 'Standard price paid'), ('B', 'Additional price paid'))
 
-    post_code       = models.CharField(null=False, max_length=12, db_index=True)
+    postcode       = models.CharField(null=False, max_length=20, db_index=True)
     property_type   = models.CharField(null=False, max_length=1,  choices=PROPERTY_TYPE)
     age             = models.CharField(null=False, max_length=1,  choices=AGE)
     duration        = models.CharField(null=False, max_length=1,  choices=DURATION)
@@ -40,7 +40,7 @@ class Property(models.Model):
         Updates the property.
         :param params:
         """
-        item = Property.objects.filter(post_code=params.get('post_code'),
+        item = Property.objects.filter(postcode=params.get('postcode'),
                                        paon_saon=params.get('paon_saon'),
                                        street=params.get('street')).first()
         if item:
@@ -56,7 +56,7 @@ class Property(models.Model):
         Adds a new property
         :param params:
         """
-        item = Property.objects.filter(post_code=params.get('post_code'),
+        item = Property.objects.filter(postcode=params.get('postcode'),
                                        paon_saon=params.get('paon_saon'),
                                        street=params.get('street')).first()
 
@@ -87,7 +87,7 @@ class Property(models.Model):
         result = []
         low = dateranges['min']
         high = dateranges['max']
-        props = Property.objects.prefetch_related('transactions').filter(town=postcode).filter(transactions__transfer_date__range=[low, high])
+        props = Property.objects.prefetch_related('transactions').filter(postcode=postcode).filter(transactions__transfer_date__range=[low, high])
         for p in props:
             filtered_transactions = Transaction.objects.filter(abode=p, transfer_date__range=[low, high])
             result.append(p.to_json(filtered_transactions))
