@@ -11,5 +11,5 @@ class View(TemplateView):
         context = super(View, self).get_context_data(**kwargs)
         context['container_id'] = 'time_series_view'
         context['name'] = self.name
-        context['title'] = 'Plentific - ' + self.title
+        context['title'] = 'Plentific - ' + self.title if self.title else 'Plentific'
         return context
