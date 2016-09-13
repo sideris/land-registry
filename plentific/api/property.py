@@ -15,12 +15,8 @@ def setup_app(request):
             Transaction.objects.all().aggregate(Min('transfer_date'))["transfer_date__min"],
             Transaction.objects.all().aggregate(Max('transfer_date'))["transfer_date__max"]
         ],
-        "postcodes" : map(lambda x: x['post_code'], Property.objects.values('post_code').distinct())
+        "postcodes" : Property.postcodes
     }
-    # for pc in response['postcodes']:
-    #     r = Property.objects.filter(post_code=pc).all()
-    #     if len(r)> 10:
-    #         print len(r), pc
     return json_response(response)
 
 

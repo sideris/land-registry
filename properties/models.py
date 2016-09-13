@@ -3,9 +3,8 @@ from __future__ import unicode_literals
 import ast
 
 from django.core import serializers
-from django.db import models, transaction, connection
-from dateutil import parser
-from django.db.models import Count
+from django.db import models, transaction
+from django.db.models import cached_property
 
 
 class Property(models.Model):
@@ -56,8 +55,6 @@ class Property(models.Model):
             t = Transaction(price=price, transfer_date=tdate, abode=item, tid=tid)
             t.save()
 
-
-
     @staticmethod
     @transaction.atomic
     def add(params):
@@ -99,6 +96,11 @@ class Property(models.Model):
             prop_tr = p.transactions.filter(transfer_date__range=[low, high])
             result.append(p.to_json(prop_tr))
         return result
+
+    @staticmethod
+    @cached_property
+    def postcodes():
+        return map(lambda x: x['postcode'], Property.objects.values('postcode').distinct())
 
     def to_json(self, transactions=None):
         """
