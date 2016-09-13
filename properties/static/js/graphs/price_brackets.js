@@ -1,3 +1,3 @@
-class PriceBracketsView extends PlentificView {
-
-}
+// class PriceBracketsView extends PlentificView {
+//
+// }
