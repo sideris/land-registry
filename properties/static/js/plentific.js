@@ -4,6 +4,9 @@ plentific.ajax = {};
 plentific.svg.viewBox = function (x0, y0, x1, y1) {
 	return [x0, y0, x1, y1].join(' ');
 };
+plentific.svg.translate = function(x, y) {
+	return 'translate(' + x +','+ y + ')';
+};
 
 plentific.ajax.get = function(url, callback) {
 	d3.json(url)

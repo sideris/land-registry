@@ -8,16 +8,17 @@ let PriceBracketsView = function(container, data) {
 	let datum;
 	let graph;
 
-	let height 	= 1024 * 1.5,
-		width	= 768;
+	let width 	= 1024 * 1.5,
+		height	= 768;
 	let bracketSize = 8;
+	let margins = {left: 20, top: 30, bottom: 100, right: 0};
 
-	let x = d3.scale.linear().range([0, width]).domain([0, 7]),
+	let x = d3.scale.linear().range([0, width - margins.left * 2]).domain([0, 7]),
 		y = d3.scale.linear().range([height, 0]);
 	let xAxis = d3.svg.axis()
 					.scale(x)
 					.orient("bottom")
-					.ticks(0);
+					.ticks(bracketSize);
 	let yAxis = d3.svg.axis()
 					.scale(y)
 					.orient("left")
@@ -34,7 +35,8 @@ let PriceBracketsView = function(container, data) {
 							.attr("width", "100%")
 							.attr("height", "100%")
 							.attr("preserveAspectRatio", "xMidYMid meet")
-							.attr("viewBox", plentific.svg.viewBox(0, 0, width, height))
+							.attr("viewBox", plentific.svg.viewBox(0, 0, width, height - margins.bottom))
+							.attr('preserveAspectRatio', 'xMidYMin')
 							.classed("svg-content", true)
 						.append('g')
 							.attr({'width':'100%', 'height': '100%'});
@@ -48,7 +50,20 @@ let PriceBracketsView = function(container, data) {
 	function updateGraph() {
 		if ( noData )
 			alert('No data. Pick other range or postcode')
-
+		else {
+			graph.selectAll("bar")
+				.data(datum)
+				.enter().append("rect")
+				.style("fill", "blue")
+				.attr("x", d => x(d.x) + margins.left)
+				.attr("width", (width - margins.left * 2) / bracketSize)
+				.attr("y", d => height - y(d.y) )
+				.attr("height", d => y(d.y) );
+			graph.append("g")
+				.attr("class", "x axis")
+				.attr("transform", plentific.svg.translate(margins.left, height - margins.bottom - 3))
+				.call(xAxis);
+		}
 	}
 
 	/**
@@ -58,10 +73,18 @@ let PriceBracketsView = function(container, data) {
 		let tmpData = [].concat.apply([], data.map(x =>
 												x.transactions.map(y => y.price)
 											)).sort();
+
 		if (tmpData.length > 0 ) {
 			brackets = d3.scale.linear().range([tmpData[0], tmpData[tmpData.length-1]]).domain([0, bracketSize - 1]);
-			y.domain([0, tmpData[tmpData.length-1]]);
 			noData = false;
+			datum = [];
+			let i = 0;
+			datum.push({x: i, y: tmpData.filter(x => x <= brackets(i)).length});
+			for(let i=1; i < bracketSize; i++)
+				datum.push({x: i, y: tmpData.filter(x => x <= brackets(i) && x > brackets(i - 1)).length})
+
+			y.domain([ 0, Math.max.apply(Math, datum.map(x => x.y)) ]);
+			console.log(datum)
 		} else {
 			noData = true;
 		}

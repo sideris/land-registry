@@ -6,11 +6,24 @@
 	{% load static %}
 	<link rel="stylesheet" type="text/css" href="{% static 'css/lib/bootstrap.min.css' %}">
 	{% block css_load %}{% endblock %}
+<style>
+	.axis text {
+		font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+		fill: black;
+		stroke: #000;
+		stroke-width: 3px;
+		shape-rendering: crispEdges;
+	}
+</style>
 </head>
 <body>
 <div id="container">
 	{% block content %}
-		<div class="svg-container" id="{{ name }}_container">
+		<div class="svg-container" id="{{ name }}_container" style="width=100%; height:100%">
 		</div>
 	{% endblock %}
 </div>
