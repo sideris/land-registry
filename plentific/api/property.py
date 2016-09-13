@@ -1,10 +1,9 @@
 from django.db.models import Q
 from django.http import HttpResponse
-from django.views.decorators.gzip import gzip_page
 from rest_framework.decorators import api_view
 
 from plentific.api.utils import json_response
-from properties.models import Property
+from properties.models import Property, Transaction
 
 
 @api_view(['GET'])
@@ -31,6 +30,11 @@ def get_property_list_date_location(request):
     to_date     = params.get('to', None)
     if not (pc or from_date or to_date):
         return HttpResponse(status=418)
-
     result = Property.list_filtered(pc, {'min': from_date, 'max': to_date})
+    return json_response(result)
+
+
+@api_view(['GET'])
+def date_limits(request):
+    result = {'date_limits': Transaction.date_limits()}
     return json_response(result)

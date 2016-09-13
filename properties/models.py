@@ -4,7 +4,9 @@ import ast
 
 from django.core import serializers
 from django.db import models, transaction
+from django.db.models import Min, Max
 from django.utils.functional import cached_property
+
 
 class Property(models.Model):
     class Meta:
@@ -129,6 +131,13 @@ class Transaction(models.Model):
                     tc.save()
                 if tc == 'D':
                     tc.delete()
+
+    # @cached_property
+    @staticmethod
+    def date_limits():
+        return [
+            Transaction.objects.all().aggregate(Min('transfer_date'))["transfer_date__min"].strftime('%Y-%m-%d'),
+            Transaction.objects.all().aggregate(Max('transfer_date'))["transfer_date__max"].strftime('%Y-%m-%d')]
 
     def to_json(self, verbose=False):
         """

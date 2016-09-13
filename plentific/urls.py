@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from plentific.api.property import get_property_list_date_location, postcode_suggest
+from plentific.api.property import get_property_list_date_location, postcode_suggest, date_limits
 from properties.views import View
 
 urlpatterns = [
@@ -26,5 +26,6 @@ urlpatterns = [
                                      name="price_brackets", title='Price brackets'), name=''),
 
     url(r'^postcode/(?P<search_term>.*?)/$',    postcode_suggest),
-    url(r'^properties',                        get_property_list_date_location)
+    url(r'^properties',                         get_property_list_date_location),
+    url(r'^date_limits',                        date_limits)
 ]

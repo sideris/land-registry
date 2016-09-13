@@ -10,10 +10,10 @@ let PriceBracketsView = function(container, data) {
 
 	let height 	= 1024 * 1.5,
 		width	= 768;
-	let brackets = 8;
+	let bracketSize = 8;
 
-	let x = d3.scale.linear().range([0, width]),
-		y = d3.scale.linear().range([height, 0])
+	let x = d3.scale.linear().range([0, width]).domain([0, 7]),
+		y = d3.scale.linear().range([height, 0]);
 	let xAxis = d3.svg.axis()
 					.scale(x)
 					.orient("bottom")
@@ -22,6 +22,8 @@ let PriceBracketsView = function(container, data) {
 					.scale(y)
 					.orient("left")
 					.ticks(0);
+	let brackets;
+	let noData = false;
 
 	/**
 	 * Makes the scaffolding for the graph
@@ -36,16 +38,16 @@ let PriceBracketsView = function(container, data) {
 							.classed("svg-content", true)
 						.append('g')
 							.attr({'width':'100%', 'height': '100%'});
-		d3.select(container)
-			.select('svg.svg-content')
-				.select('g')
-					.classed(container.replace('#','') + '-graph', true)
+		graph = d3.select(container).select('svg.svg-content').select('g');
+		graph.classed(container.replace('#','') + '-graph', true)
 	}
 
 	/**
 	 * Updates the graph should any change occur
 	 */
 	function updateGraph() {
+		if ( noData )
+			alert('No data. Pick other range or postcode')
 
 	}
 
@@ -53,10 +55,17 @@ let PriceBracketsView = function(container, data) {
 	 * Parses the data to create appropriate dataset for this graph
 	 */
 	function parseData() {
-		datum = [].concat.apply([], data.map(x =>
+		let tmpData = [].concat.apply([], data.map(x =>
 												x.transactions.map(y => y.price)
 											)).sort();
-		console.log(datum)
+		if (tmpData.length > 0 ) {
+			brackets = d3.scale.linear().range([tmpData[0], tmpData[tmpData.length-1]]).domain([0, bracketSize - 1]);
+			y.domain([0, tmpData[tmpData.length-1]]);
+			noData = false;
+		} else {
+			noData = true;
+		}
+		// console.log(tmpData)
 	}
 
 	/**
