@@ -4,8 +4,7 @@ import ast
 
 from django.core import serializers
 from django.db import models, transaction
-from django.db.models import cached_property
-
+from django.utils.functional import cached_property
 
 class Property(models.Model):
     class Meta:
