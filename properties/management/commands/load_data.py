@@ -36,7 +36,8 @@ class Command(BaseCommand):
             c += 1
             corrected = line[0:7] + ["%s %s" % (line[7], line[8])] + line[9:]
             obj = self.parse_object(corrected)
-            Property.add(obj)
+            Property.add(obj)   # this needs Postgres' bulk import
+                                # check here https://docs.djangoproject.com/en/dev/ref/models/querysets/#django.db.models.query.QuerySet.bulk_create
             if c % 10000 == 0:
                 print('Wrote %ik lines' % (c / 1000))
             # if c == 300: break

@@ -22,8 +22,6 @@ def postcode_suggest(request, search_term=None):
     return json_response(result)
 
 
-# def find_user_by_name(query_name):
-
 # @gzip_page
 @api_view(['GET'])
 def get_property_list_date_location(request):
