@@ -15,14 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from plentific.api.property import setup_app, get_property_list_date_location
+from plentific.api.property import get_property_list_date_location, postcode_suggest
 from properties.views import View
 
 urlpatterns = [
-    url(r'^$', View.as_view(template_name="../templates/base.html"), name='home'),
-    url(r'^ts/', View.as_view(template_name="../templates/timeseries.html", name="timeseries", title='Timeseries'), name=''),
-    url(r'^brackets/', View.as_view(template_name="../templates/price_brackets.html",
-                                    name="price_brackets", title='Price brackets'), name=''),
-    url(r'^setup/', setup_app),
-    url(r'^properties/', get_property_list_date_location)
+    # url(r'^$',          View.as_view(template_name="../templates/base.html"), name='home'),
+    url(r'^ts/',        View.as_view(template_name="../templates/timeseries.html", name="timeseries",
+                                     title='Timeseries'), name=''),
+    url(r'^brackets/',  View.as_view(template_name="../templates/price_brackets.html",
+                                     name="price_brackets", title='Price brackets'), name=''),
+
+    url(r'^postcode/(?P<search_term>.*?)/$',    postcode_suggest),
+    url(r'^properties/',                        get_property_list_date_location)
 ]

@@ -96,11 +96,6 @@ class Property(models.Model):
             result.append(p.to_json(prop_tr))
         return result
 
-    @staticmethod
-    @cached_property
-    def postcodes():
-        return map(lambda x: x['postcode'], Property.objects.values('postcode').distinct())
-
     def to_json(self, transactions=None):
         """
         Serializes the item as a dictionary

@@ -1,23 +1,27 @@
-from django.db.models import Max, Min
+from django.db.models import Q
 from django.http import HttpResponse
-from django.views.decorators.gzip import gzip_page
 from rest_framework.decorators import api_view
 
 from plentific.api.utils import json_response
-from properties.models import Property, Transaction
+from properties.models import Property
 
 
-# @gzip_page
 @api_view(['GET'])
-def setup_app(request):
-    response = {
-        "date_limits" : [
-            Transaction.objects.all().aggregate(Min('transfer_date'))["transfer_date__min"],
-            Transaction.objects.all().aggregate(Max('transfer_date'))["transfer_date__max"]
-        ],
-        "postcodes" : Property.postcodes
-    }
-    return json_response(response)
+def postcode_suggest(request, search_term=None):
+    """
+    Accepts a search term for a post code and returns a list of results
+    :param request:
+    :param search_term:
+    :return:
+    """
+    result = []
+    if search_term:
+        qs = Property.objects.values('postcode').filter(Q(postcode__icontains=search_term)).distinct()
+        result = map(lambda x: x['postcode'], qs)
+    return json_response(result)
+
+
+# def find_user_by_name(query_name):
 
 
 @api_view(['GET'])
