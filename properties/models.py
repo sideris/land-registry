@@ -43,11 +43,20 @@ class Property(models.Model):
         item = Property.objects.filter(postcode=params.get('postcode'),
                                        paon_saon=params.get('paon_saon'),
                                        street=params.get('street')).first()
+        p_params = dict(params)
+        price    = p_params.pop('price')
+        tdate    = p_params.pop('transfer_date')
+        tid      = p_params.pop('tid')
         if item:
+            # update any parameters that might have changed
             for key in params:
-                if getattr(item, key) != params.get(key):
-                    setattr(item, key, params.get(key))
+                if getattr(item, key) != p_params.get(key):
+                    setattr(item, key, p_params.get(key))
             item.save()
+            t = Transaction(price=price, transfer_date=tdate, abode=item, tid=tid)
+            t.save()
+
+
 
     @staticmethod
     @transaction.atomic
@@ -108,6 +117,21 @@ class Transaction(models.Model):
     price           = models.IntegerField(null=False)
     transfer_date   = models.DateField(null=False, db_index=True)
     abode           = models.ForeignKey('Property', related_name='transactions')
+
+    @staticmethod
+    def update(params):
+        tid = params.get('tid', None)
+        tc = params.get('type_of_transaction')
+        if tid:
+            trans = Transaction.objects.filter(tid=tid).first()
+            if trans:
+                if tc == 'C':
+                    for key in ['price', 'transfer_date']:
+                        if params.get(key, None):
+                            setattr(tc, key, params.get(key))
+                    tc.save()
+                if tc == 'D':
+                    tc.delete()
 
     def to_json(self):
         """
