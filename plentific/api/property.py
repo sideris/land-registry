@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.http import HttpResponse
+from django.views.decorators.gzip import gzip_page
 from rest_framework.decorators import api_view
 
 from plentific.api.utils import json_response
@@ -23,10 +24,10 @@ def postcode_suggest(request, search_term=None):
 
 # def find_user_by_name(query_name):
 
-
+# @gzip_page
 @api_view(['GET'])
 def get_property_list_date_location(request):
-    params = request.GET
+    params      = request.GET
     pc          = params.get('postcode', None)  # support only postcodes for now
     from_date   = params.get('from', None)
     to_date     = params.get('to', None)
@@ -34,5 +35,4 @@ def get_property_list_date_location(request):
         return HttpResponse(status=418)
 
     result = Property.list_filtered(pc, {'min': from_date, 'max': to_date})
-    print result
     return json_response(result)

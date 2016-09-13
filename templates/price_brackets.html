@@ -8,9 +8,13 @@
 
 {% block scripts %}
 <script>
-{#	$(document).ready(function(){#}
-		let graph = new PriceBracketsView('#price_brackets_container', {});
-		graph.call()
-{#	})#}
+	$(document).ready(function(){
+		plentific.ajax.get('/properties?from=1995-01-01&to=2012-01-01&postcode=CB21 4UH', function(error, data){
+			if(error) throw error;
+			console.log(data);
+			let graph = new PriceBracketsView('#price_brackets_container', data);
+			graph.call()
+		})
+	})
 </script>
 {% endblock %}

@@ -90,8 +90,9 @@ class Property(models.Model):
         low = dateranges['min']
         high = dateranges['max']
         props = Property.objects.prefetch_related('transactions').filter(postcode=postcode).filter(transactions__transfer_date__range=[low, high])
+        # print len(props)
         for p in props:
-            # filtered_transactions = Transaction.objects.filter(abode=p, transfer_date__range=[low, high])
+            # prop_tr = Transaction.objects.filter(abode=p, transfer_date__range=[low, high])
             prop_tr = p.transactions.filter(transfer_date__range=[low, high])
             result.append(p.to_json(prop_tr))
         return result
@@ -129,7 +130,7 @@ class Transaction(models.Model):
                 if tc == 'D':
                     tc.delete()
 
-    def to_json(self):
+    def to_json(self, verbose=False):
         """
         Serializes the item as a dictionary
         :return: {dict}
@@ -137,4 +138,6 @@ class Transaction(models.Model):
         result = serializers.serialize('json', [self, ])
         result = ast.literal_eval(result)[0]['fields']
         result.pop('abode')
+        if not verbose:
+            result.pop('tid')
         return result

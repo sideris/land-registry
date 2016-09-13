@@ -26,5 +26,5 @@ urlpatterns = [
                                      name="price_brackets", title='Price brackets'), name=''),
 
     url(r'^postcode/(?P<search_term>.*?)/$',    postcode_suggest),
-    url(r'^properties/',                        get_property_list_date_location)
+    url(r'^properties',                        get_property_list_date_location)
 ]

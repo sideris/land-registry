@@ -1,9 +1,18 @@
 let plentific = {};
 plentific.svg = {};
+plentific.ajax = {};
 plentific.svg.viewBox = function (x0, y0, x1, y1) {
 	return [x0, y0, x1, y1].join(' ');
 };
 
+plentific.ajax.get = function(url, callback) {
+	d3.json(url)
+		.header("X-REQUESTED-WITH", "XMLHttpRequest")
+		.on("beforesend",	function()		{;})
+		.on("load",			function(json)	{callback(null, json)})
+		.on("error",		function(error)	{callback(error, null)})
+		.get();
+};
 
 // class PlentificView {
 //
