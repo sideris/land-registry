@@ -2,6 +2,7 @@
 //
 // }
 
+
 let PriceBracketsView = function(container, data) {
 	let svg;
 	let datum;
@@ -9,6 +10,7 @@ let PriceBracketsView = function(container, data) {
 
 	let height 	= 1024 * 1.5,
 		width	= 768;
+	let brackets = 8;
 
 	let x = d3.scale.linear().range([0, width]),
 		y = d3.scale.linear().range([height, 0])
@@ -51,7 +53,10 @@ let PriceBracketsView = function(container, data) {
 	 * Parses the data to create appropriate dataset for this graph
 	 */
 	function parseData() {
-
+		datum = [].concat.apply([], data.map(x =>
+												x.transactions.map(y => y.price)
+											)).sort();
+		console.log(datum)
 	}
 
 	/**
