@@ -17,7 +17,7 @@ let PropertyTypesView = function(container, data) {
 	let noData = false;
 
 	const line = d3.svg.line()
-		.interpolate("linear")
+		.interpolate("basis")
 		.x( d => x(d.date) )
 		.y(d => y(d.price));
 	const typeMap = {	D: 'Detached', S: 'Semi detached', T: 'Terraced', F: 'Flats  / Maisonnetes', O: 'Other' }; //should come from API
