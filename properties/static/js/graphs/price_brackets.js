@@ -29,6 +29,9 @@ let PriceBracketsView = function(container, data) {
 					.ticks(5).tickFormat(d3.format("d"));
 	let bracketScale;
 	let noData = false;
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
 	/**
 	 * Makes the scaffolding for the graph
@@ -66,7 +69,20 @@ let PriceBracketsView = function(container, data) {
 				.attr("x", (d, i) => x(d.x) - barW)
 				.attr("width", barW)
 				.attr("y", d => height - y(d.y) )
-				.attr("height", d => y(d.y) );
+				.attr("height", d => y(d.y) )
+				.on("mouseover", function(d) {
+					div.transition()
+						.duration(200)
+						.style("opacity", .9);
+					div	.html('Properties:' + d.y)
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY - 28) + "px");
+				})
+				.on("mouseout", function(d) {
+					div.transition()
+						.duration(500)
+						.style("opacity", 0);
+				});
 			graph.append("g")
 				.attr("class", "x axis")
 				.attr("transform", plentific.svg.translate(0, height))

@@ -19,6 +19,7 @@
 <script>
 	$(document).ready(function(){
 		let priceGraph, typesGraph;
+		// maybe use Promise if we need to chain more
 		plentific.ajax.get('/date_limits', function (e, dates) {
 			if (e) throw e;
 			let startD 	= dates.date_limits[0],
@@ -30,15 +31,19 @@
 					format: 'YYYY-MM-DD'
 				},
 				startDate: startD,
-				endDate: endD
+				endDate: endD,
+				maxDate:endD,
+				minDate:startD,
+			}, (start, end, label) => {
+				console.log(start.format(plentific.date.format), end.format(plentific.date.format), label);
 			});
 			plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 				if(error) throw error;
 				let priceGraph = new PriceBracketsView('#price_brackets_container', data);
 				priceGraph.call()
-			})
-		})
+			});
 
+		})
 
 	})
 </script>

@@ -1,6 +1,9 @@
 let plentific = {};
 plentific.svg = {};
 plentific.ajax = {};
+plentific.date = {
+	format: 'YYYY-MM-DD'
+};
 plentific.svg.viewBox = function (x0, y0, x1, y1) {
 	return [x0, y0, x1, y1].join(' ');
 };

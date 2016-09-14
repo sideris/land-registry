@@ -6,28 +6,8 @@
 	{% load static %}
 	<link rel="stylesheet" type="text/css" href="{% static 'css/lib/bootstrap.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/lib/daterangepicker.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/plentific.css' %}">
 	{% block css_load %}{% endblock %}
-<style>
-	.axis text {
-		text-anchor: middle;
-		fill: #444;
-		stroke: #444;
-		stroke-width: 0.1;
-		alignment-baseline: middle;
-	}
-	.axis path,
-	.axis line {
-		fill: #777;
-		stroke: #777;
-		shape-rendering: crispEdges;
-		stroke-width: 0.1;
-	}
-	.axis path {
-  		display: none;
-	}
-	.svg-content {	padding: 10px;}
-	.background rect { fill: #EEEEEE; }
-</style>
 </head>
 <body>
 <div id="container">
