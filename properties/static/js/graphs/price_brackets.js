@@ -59,9 +59,7 @@ var div = d3.select("body").append("div")
 	 */
 	function updateGraph() {
 		if ( noData ) {
-			console.log('lele')
-						plentific.view.showMessage('No data. Pick other range or postcode');
-
+			plentific.view.showMessage('No data. Pick other range or postcode');
 		} else {
 			let barW =  x(1) - x(0) - 1;
 			graph.selectAll("bar")
