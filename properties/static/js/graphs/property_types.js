@@ -17,7 +17,7 @@ let PropertyTypesView = function(container, data) {
 	let noData = false;
 
 	const line = d3.svg.line()
-		.interpolate("monotone")
+		.interpolate("linear")
 		.x( d => x(d.date) )
 		.y(d => y(d.price));
 	const typeMap = {	D: 'Detached', S: 'Semi detached', T: 'Terraced', F: 'Flats  / Maisonnetes', O: 'Other' }; //should come from API
@@ -55,10 +55,10 @@ let PropertyTypesView = function(container, data) {
 					.attr("class", "property-type");
 			ptypes.append('path')
 					.attr('class', 'line')
-					.attr('d', d =>  line(d.values))
+					.attr('d', d =>  line(d.fixed))
 					.style("stroke", (d, i) => col(i) );
 			ptypes.append("text")
-				  .datum(function(d) { return {label: d.label, value: d.values[d.values.length - 1]}; })
+				  .datum(function(d) { return {label: d.label, value: d.fixed[d.fixed.length - 1]}; })
 				  .attr("transform", function(d) { if(d.value) return "translate(" + x(d.value.date) + "," + y(d.value.price) + ")"; })
 				  .attr("x", 3)
 				  .attr("dy", ".35em")
@@ -97,17 +97,32 @@ let PropertyTypesView = function(container, data) {
 					return { price: x.price, date: moment(x.transfer_date).toDate()};
 				})
 				.sort((a, b) => +(a.date) - +(b.date));
+			let avg;
 			if(byType[key].length > 0) {
 				startDate = +(byType[key][0].date) < +startDate ? byType[key][0].date : startDate;
 				endDate = +(byType[key][byType[key].length - 1].date) > +endDate ? byType[key][byType[key].length - 1].date : endDate;
+				let sum = 0;
+				// byType[key].reduce((a, b) => a.price + b.price);
+				byType[key].forEach(x => sum+=x.price);
+				avg = sum / byType[key].length;
 			}
-			datum.push( {label: typeMap[key], values: byType[key]} )
+			datum.push( {label: typeMap[key], values: byType[key], mean: avg} )
 		}
-		y.domain([0, maxY]);
+		datum.forEach(function(d){
+			d.fixed = [];
+			for(let i=0; i<d.values.length;i++) {
+				d.fixed.push({
+					date: d.values[i].date,
+					price:  100 * d.values[i].price / d.mean
+				})
+			}
+		});
+		var normalizedYMax = Math.max.apply( Math, [].concat.apply([], datum.map(x=> x.fixed.map(y=>y.price))))
+		y.domain([0, Math.max(normalizedYMax * 1.2, 200)]);
 		x.domain([startDate, endDate]);
+		graph.select('.x.axis').transition().duration(1500).ease("sin-in-out").call(xAxis);
+		graph.select('.y.axis').transition().duration(1500).ease("sin-in-out").call(yAxis);
 		// console.log(byType)
-		// console.log(datum)
-		// console.log(x(startDate), x(endDate))
 	}
 
 	/**
