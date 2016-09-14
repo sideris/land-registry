@@ -62,10 +62,12 @@
 
 			$('#search').click(function() {
 				let $b = $(this);
+				$('#loading').show();
 				$b.attr('disabled', 'disabled').html('Please wait');
 				let postCode = $('#postcode').val().toUpperCase();
 				plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 					if(error) throw error;
+					$('#loading').hide();
 					if (data.length === 0)
 						plentific.view.showMessage('No data. Pick other range or postcode');
 					priceGraph.updateDataset(data);
@@ -74,15 +76,6 @@
 				});
 			});
 
-			$('#postcode').on('change', function() {
-				let v = $(this).val().toUpperCase();
-				if(v.length >= 3) {
-					plentific.ajax.get(`/postcode/${v}/`, function(e, d){
-						$('#codes').html('');
-						d.forEach((d) => $('#codes').append(`<option>${d}</option>`))
-					})
-				}
-			})
 		});
 	})
 </script>
