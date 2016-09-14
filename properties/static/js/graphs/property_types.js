@@ -103,7 +103,7 @@ let PropertyTypesView = function(container, data) {
 			}
 			datum.push( {label: typeMap[key], values: byType[key]} )
 		}
-		y.domain([minY, maxY]);
+		y.domain([0, maxY]);
 		x.domain([startDate, endDate]);
 		// console.log(byType)
 		// console.log(datum)
