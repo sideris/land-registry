@@ -84,6 +84,8 @@ let PropertyTypesView = function(container, data) {
 	 */
 	function parseData() {
 		// console.log(data)
+		startDate	= new Date("2200");
+		endDate 	= new Date("1900");
 		let byType = {};
 		let minY = 10000000000, maxY = 0;
 		datum = [];

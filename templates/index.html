@@ -61,6 +61,8 @@
 			});
 
 			$('#search').click(function() {
+				let $b = $(this);
+				$b.attr('disabled', 'disabled').html('Please wait');
 				let postCode = $('#postcode').val().toUpperCase();
 				plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 					if(error) throw error;
@@ -68,6 +70,7 @@
 						plentific.view.showMessage('No data. Pick other range or postcode');
 					priceGraph.updateDataset(data);
 					typesGraph.updateDataset(data);
+					$b.attr('disabled', false).html('Search');
 				});
 			});
 
