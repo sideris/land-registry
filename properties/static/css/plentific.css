@@ -17,7 +17,11 @@
 	display: none;
 }
 .background rect { fill: #EEEEEE; }
-
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
 
 /*Container and sub containers */
 .svg-container {
@@ -68,7 +72,12 @@
 
 /* Inputs */
 .controls {
-	margin-top: 50px;
-	padding: 20px;
+	padding: 15px;
 	background: #eee;
+}
+
+button#search{
+	padding: 5px;
+	font-size: 2em;
+
 }

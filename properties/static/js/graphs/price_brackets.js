@@ -29,9 +29,9 @@ let PriceBracketsView = function(container, data) {
 					.ticks(5).tickFormat(d3.format("d"));
 	let bracketScale;
 	let noData = false;
-var div = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+	var div = d3.select("body").append("div")
+		.attr("class", "tooltip")
+		.style("opacity", 0);
 
 	/**
 	 * Makes the scaffolding for the graph
@@ -58,9 +58,7 @@ var div = d3.select("body").append("div")
 	 * Updates the graph should any change occur
 	 */
 	function updateGraph() {
-		if ( noData ) {
-			plentific.view.showMessage('No data. Pick other range or postcode');
-		} else {
+		if ( noData === false ) {
 			let barW =  x(1) - x(0) - 1;
 			graph.selectAll("bar")
 				.data(datum)

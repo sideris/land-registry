@@ -2,29 +2,25 @@ let PropertyTypesView = function(container, data) {
 	let svg;
 	let datum;
 	let graph;
-
-	let width 	= 1024 * 2,
+	const width 	= 1024 * 2,
 		height	= 768;
-	let nBrackets = 8;
-	let margin = {top: 20, right: 20, bottom: 40, left: 100};
+	const margin = {top: 20, right: 20, bottom: 40, left: 100};
 
-	let x = d3.scale.linear().range([0, width]).domain([0, nBrackets - 1]),
-		y2 = d3.scale.linear().range([height, 0]),
-		y = d3.scale.linear().range([0, height]);
-	let xAxis = d3.svg.axis()
-					.scale(x)
-					.orient("bottom")
-					.ticks(nBrackets)
-					.tickFormat(function(i){
-						let p1 = i === 0 ? '0' : Math.round(Math.ceil(bracketScale(i-1)));
-						let p2 = i === nBrackets - 1 ? ' and over' :  ' - ' + Math.round(Math.ceil(bracketScale(i)));
-						return p1 + p2;});
-	let yAxis = d3.svg.axis().scale(y2)
-					.orient("left")
-					.ticks(5).tickFormat(d3.format("d"));
-	let bracketScale;
+	let startDate	= new Date("2200"),
+		endDate 	= new Date("1900");
+
+	let x = d3.time.scale.utc().range([0, width]),
+		y = d3.scale.linear().range([height, 0]),
+		col = d3.scale.category10()
+	let xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10).tickFormat(d3.time.format("%d/%b/%Y")),
+		yAxis = d3.svg.axis().scale(y).orient("left").ticks(5).tickFormat(d3.format("d"));
 	let noData = false;
 
+	const line = d3.svg.line()
+		.interpolate("monotone")
+		.x( d => x(d.date) )
+		.y(d => y(d.price));
+	const typeMap = {	D: 'Detached', S: 'Semi detached', T: 'Terraced', F: 'Flats  / Maisonnetes', O: 'Other' }; //should come from API
 	/**
 	 * Makes the scaffolding for the graph
 	 */
@@ -50,19 +46,28 @@ let PropertyTypesView = function(container, data) {
 	 * Updates the graph should any change occur
 	 */
 	function updateGraph() {
-		if ( noData )
-			alert('No data. Pick other range or postcode');
-		else {
-			let barW =  x(1) - x(0) - 1;
+		if ( noData === false ) {
 
-			graph.selectAll("bar")
+			let ptypes = graph
+				.selectAll("property-type")
 				.data(datum)
-				.enter().append("rect")
-				.style("fill", "#99badd")
-				.attr("x", (d, i) => x(d.x) - barW)
-				.attr("width", barW)
-				.attr("y", d => height - y(d.y) )
-				.attr("height", d => y(d.y) );
+				.enter().append("g")
+					.attr("class", "property-type");
+			ptypes.append('path')
+					.attr('class', 'line')
+					.attr('d', d =>  line(d.values))
+					.style("stroke", (d, i) => col(i) );
+			ptypes.append("text")
+				  .datum(function(d) { return {label: d.label, value: d.values[d.values.length - 1]}; })
+				  .attr("transform", function(d) { if(d.value) return "translate(" + x(d.value.date) + "," + y(d.value.price) + ")"; })
+				  .attr("x", 3)
+				  .attr("dy", ".35em")
+				  .text(function(d) {
+					  if(d.value)
+						  return d.label;
+					  return '';
+				  });
+
 			graph.append("g")
 				.attr("class", "x axis")
 				.attr("transform", plentific.svg.translate(0, height))
@@ -71,10 +76,6 @@ let PropertyTypesView = function(container, data) {
 				.attr("class", "y axis")
 				.attr("transform", plentific.svg.translate(0, 0))
 				.call(yAxis);
-
-			graph.select('.x.axis')
-				.selectAll('.tick')
-				.attr('transform', i => plentific.svg.translate(barW * (i - 0.5), 0))
 		}
 	}
 
@@ -82,25 +83,31 @@ let PropertyTypesView = function(container, data) {
 	 * Parses the data to create appropriate dataset for this graph
 	 */
 	function parseData() {
-		let salePrices = [].concat.apply([], data.map(x =>
-												x.transactions.map(y => y.price)));
-		salePrices = salePrices.sort((a,b) => a - b);
-		if (salePrices.length > 0 ) {
-			bracketScale = d3.scale.linear().range([0, salePrices[salePrices.length-1]]).domain([0, nBrackets]);
-			noData = false;
-			datum = [];
-			let i = 0;
-			datum.push({x: i, y: salePrices.filter(x => x < bracketScale(i)).length})
-
-			for(i=1; i < nBrackets - 1; i++){
-				datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i-1) && x < bracketScale(i)).length})
+		// console.log(data)
+		let byType = {};
+		let minY = 10000000000, maxY = 0;
+		datum = [];
+		for(let key of Object.keys(typeMap)) {
+			byType[key] = [].concat
+				.apply([], data.filter(x => x.property_type === key)
+								.map(x => x.transactions))
+				.map(x => {
+					minY = x.price < minY ? x.price : minY;
+					maxY = x.price > maxY ? x.price : maxY;
+					return { price: x.price, date: moment(x.transfer_date).toDate()};
+				})
+				.sort((a, b) => +(a.date) - +(b.date));
+			if(byType[key].length > 0) {
+				startDate = +(byType[key][0].date) < +startDate ? byType[key][0].date : startDate;
+				endDate = +(byType[key][byType[key].length - 1].date) > +endDate ? byType[key][byType[key].length - 1].date : endDate;
 			}
-			datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i)).length})
-			y.domain([0, Math.max.apply(Math, datum.map(x => x.y))]);
-			y2.domain([0, Math.max.apply(Math, datum.map(x => x.y))]);
-		} else {
-			noData = true;
+			datum.push( {label: typeMap[key], values: byType[key]} )
 		}
+		y.domain([minY, maxY]);
+		x.domain([startDate, endDate]);
+		// console.log(byType)
+		// console.log(datum)
+		// console.log(x(startDate), x(endDate))
 	}
 
 	/**
@@ -112,6 +119,8 @@ let PropertyTypesView = function(container, data) {
 		parseData();
 		updateGraph();
 	};
+
+
 
 	/**
 	 * Creates the view
