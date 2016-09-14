@@ -103,17 +103,18 @@ let PriceBracketsView = function(container, data) {
 		let salePrices = [].concat.apply([], data.map(x =>
 												x.transactions.map(y => y.price)));
 		salePrices = salePrices.sort((a,b) => a - b);
+		let clean = removeOutliers(salePrices);
 		// console.log(salePrices)
 		// console.log(data)
-		if (salePrices.length > 0 ) {
-			bracketScale = d3.scale.linear().range([0, salePrices[salePrices.length-1]]).domain([0, nBrackets]);
+		if (clean.length > 0 ) {
+			bracketScale = d3.scale.linear().range([0, clean[clean.length-1]]).domain([0, nBrackets]);
 			noData = false;
 			datum = [];
 			let i = 0;
-			datum.push({x: i, y: salePrices.filter(x => x < bracketScale(i)).length});
+			datum.push({x: i, y: clean.filter(x => x < bracketScale(i)).length});
 			for(i=1; i < nBrackets - 1; i++)
-				datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i-1) && x < bracketScale(i)).length})
-			datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i-1)).length});
+				datum.push({x: i, y: clean.filter(x => x >= bracketScale(i-1) && x < bracketScale(i)).length})
+			datum.push({x: i, y: clean.filter(x => x >= bracketScale(i-1)).length});
 			y.domain([0, Math.max.apply(Math, datum.map(x => x.y))]);
 			y2.domain([0, Math.max.apply(Math, datum.map(x => x.y))]);
 		} else {
@@ -122,12 +123,36 @@ let PriceBracketsView = function(container, data) {
 	}
 
 	/**
+	 * Removes all outliers that are 3 std from the mean
+	 * @param arr The sorted value array
+	 */
+	function removeOutliers (arr) {
+		let sum=0,
+			sumsq = 0; // stores sum of squares
+		let l = arr.length;
+		for(var i=0;i<l;++i) {
+			sum		+=arr[i];
+			sumsq	+=arr[i] * arr[i];
+		}
+		let mean 		= sum / l;
+		let variance 	= sumsq / l - mean * mean;
+		let sd 			= Math.sqrt(variance);
+
+		let data3 = [];
+		for(let i=0;i<l;++i) {
+			if(arr[i] > mean - 3 *sd && arr[i] < mean + 3 * sd)
+				data3.push(arr[i]);
+		}
+		return data3;
+	}
+
+	/**
 	 * Updates the dataset and the graph
 	 * @param dataset The new dataset
 	 */
 	this.updateDataset = function(dataset) {
 		data = dataset;
-		bars.remove();
+		if(bars)bars.remove();
 		graph.selectAll('.axis').remove();
 		parseData();
 		updateGraph();
