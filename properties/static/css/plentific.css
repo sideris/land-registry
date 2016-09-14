@@ -1,3 +1,4 @@
+/* SVG elements */
 .axis text {
 	text-anchor: middle;
 	fill: #444;
@@ -15,9 +16,10 @@
 .axis path {
 	display: none;
 }
-.svg-content {	padding: 10px;}
 .background rect { fill: #EEEEEE; }
-.row {margin:0;}
+
+
+/*Container and sub containers */
 .svg-container {
 	padding: 30px 0;
 	margin: 20px 10px;
@@ -25,7 +27,44 @@
 	-moz-box-shadow: 0px 1px 1px 2px rgba(0, 0, 0, .2);
 	box-shadow: 0px 1px 1px 2px rgba(0, 0, 0, .2);
 }
+.svg-content {	padding: 10px;}
 
+.row {
+	margin: 0;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.row > [class*='col-'] {
+	display: flex;
+	flex-direction: column;
+}
+
+#message {
+	z-index: 99999999;
+	position: fixed;
+	top: 80px;
+	right: 50px;
+	height: 150px;
+	text-align: center;
+	padding: 20px;
+	display: none;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 1px 2px rgba(0, 0, 0, .3);
+	-moz-box-shadow: 0 1px 1px 2px rgba(0, 0, 0, .3);
+	box-shadow: 0 1px 1px 2px rgba(0, 0, 0, .3);
+
+}
+#message.error {
+	color: whitesmoke;
+	background-color: firebrick;
+	font-size: 3em;
+}
 
 /* Inputs */
 .controls {

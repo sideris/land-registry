@@ -58,9 +58,11 @@ var div = d3.select("body").append("div")
 	 * Updates the graph should any change occur
 	 */
 	function updateGraph() {
-		if ( noData )
-			alert('No data. Pick other range or postcode');
-		else {
+		if ( noData ) {
+			console.log('lele')
+						plentific.view.showMessage('No data. Pick other range or postcode');
+
+		} else {
 			let barW =  x(1) - x(0) - 1;
 			graph.selectAll("bar")
 				.data(datum)

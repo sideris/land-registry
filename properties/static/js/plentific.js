@@ -1,9 +1,11 @@
-let plentific = {};
-plentific.svg = {};
-plentific.ajax = {};
-plentific.date = {
-	format: 'YYYY-MM-DD'
+let plentific = {
+	svg: {},
+	ajax: {},
+	date: {},
+	view: {}
 };
+
+plentific.date.format = 'YYYY-MM-DD';
 plentific.svg.viewBox = function (x0, y0, x1, y1) {
 	return [x0, y0, x1, y1].join(' ');
 };
@@ -18,6 +20,12 @@ plentific.ajax.get = function(url, callback) {
 		.on("load",			function(json)	{callback(null, json)})
 		.on("error",		function(error)	{callback(error, null)})
 		.get();
+};
+
+plentific.view.showMessage = function(msg='', cl='error', duration=2000) {
+	$('#message').html(msg).addClass(cl).fadeIn(duration, function () {
+		$(this).fadeOut(duration/3)
+	});
 };
 
 // class PlentificView {
