@@ -1,6 +1,45 @@
 {% extends 'base.html' %}
 	{% block content %}
-		{{ block.super }}
-
-		{{ name }}
+		<div class="controls row" class="col-md-12">
+			<input id="postcode" name="postcode" class="form-control" placeholder="Post Code" type="text"/>
+			<input id="dates"class="form-control" type="datetime"/>
+		</div>
+		<div class="svg-container row" id="price_brackets_container" class="col-md-12"></div>
+		<div class="svg-container row" id="property_types_container" class="col-md-12"></div>
 	{% endblock %}
+
+{% block js_load %}
+	{{ block.super }}
+	{% load static %}
+		<script src="{% static 'js/graphs/price_brackets.js' %}"></script>
+		<script src="{% static 'js/graphs/property_types.js' %}"></script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function(){
+		let priceGraph, typesGraph;
+		plentific.ajax.get('/date_limits', function (e, dates) {
+			if (e) throw e;
+			let startD 	= dates.date_limits[0],
+				endD	= dates.date_limits[1];
+			let postCode = 'CB3 0HW';
+{#			PE29 1WX#}
+			$('#dates').daterangepicker({
+				locale: {
+					format: 'YYYY-MM-DD'
+				},
+				startDate: startD,
+				endDate: endD
+			});
+			plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
+				if(error) throw error;
+				let priceGraph = new PriceBracketsView('#price_brackets_container', data);
+				priceGraph.call()
+			})
+		})
+
+
+	})
+</script>
+{% endblock %}

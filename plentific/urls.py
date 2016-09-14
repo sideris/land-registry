@@ -19,12 +19,7 @@ from plentific.api.property import get_property_list_date_location, postcode_sug
 from properties.views import View
 
 urlpatterns = [
-    # url(r'^$',          View.as_view(template_name="../templates/base.html"), name='home'),
-    url(r'^ts/',        View.as_view(template_name="../templates/timeseries.html", name="timeseries",
-                                     title='Timeseries'), name=''),
-    url(r'^brackets/',  View.as_view(template_name="../templates/price_brackets.html",
-                                     name="price_brackets", title='Price brackets'), name=''),
-
+    url(r'^$',          View.as_view(template_name="../templates/index.html"), name='home'),
     url(r'^postcode/(?P<search_term>.*?)/$',    postcode_suggest),
     url(r'^properties',                         get_property_list_date_location),
     url(r'^date_limits',                        date_limits)
