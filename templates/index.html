@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 	{% block content %}
 		<div class="controls row" class="col-md-12">
-			<input id="postcode" name="postcode" class="form-control" placeholder="Post Code" type="text"/>
-			<input id="dates"class="form-control" type="datetime"/>
+			<div class="col-md-4">
+				<label for="dates">Select postcode
+				<input id="postcode" name="postcode" value="N1 7JQ" class="form-control" placeholder="Post Code" type="text"/></label>
+			</div>
+			<div class="col-md-4 col-md-offset-4">
+				<label for="dates">Pick a range of dates
+				<input name="dates" id="dates"class="form-control" type="datetime"/></label>
+			</div>
 		</div>
+
 		<div class="svg-container row" id="price_brackets_container" class="col-md-12"></div>
 		<div class="svg-container row" id="property_types_container" class="col-md-12"></div>
 	{% endblock %}
@@ -24,7 +31,7 @@
 			if (e) throw e;
 			let startD 	= dates.date_limits[0],
 				endD	= dates.date_limits[1];
-			let postCode = 'CB3 0HW';
+			let postCode = 'N1 7JQ';
 {#			PE29 1WX#}
 			$('#dates').daterangepicker({
 				locale: {
