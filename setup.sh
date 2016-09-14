@@ -16,7 +16,7 @@ mkdir -p $WORKON_HOME
 
 
 if [ "$1" = "setdb" ]; then
-    setup_postgres()
+    setup_postgres
 else
   echo "Wrong parameter. To setup postgres try `setdb`"
 fi
