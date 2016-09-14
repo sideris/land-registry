@@ -89,19 +89,17 @@ let PriceBracketsView = function(container, data) {
 		let salePrices = [].concat.apply([], data.map(x =>
 												x.transactions.map(y => y.price)));
 		salePrices = salePrices.sort((a,b) => a - b);
-		console.log(salePrices)
-		console.log(data)
+		// console.log(salePrices)
+		// console.log(data)
 		if (salePrices.length > 0 ) {
 			bracketScale = d3.scale.linear().range([0, salePrices[salePrices.length-1]]).domain([0, nBrackets]);
 			noData = false;
 			datum = [];
 			let i = 0;
-			datum.push({x: i, y: salePrices.filter(x => x < bracketScale(i)).length})
-
-			for(i=1; i < nBrackets - 1; i++){
+			datum.push({x: i, y: salePrices.filter(x => x < bracketScale(i)).length});
+			for(i=1; i < nBrackets - 1; i++)
 				datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i-1) && x < bracketScale(i)).length})
-			}
-			datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i-1)).length})
+			datum.push({x: i, y: salePrices.filter(x => x >= bracketScale(i-1)).length});
 			y.domain([0, Math.max.apply(Math, datum.map(x => x.y))]);
 			y2.domain([0, Math.max.apply(Math, datum.map(x => x.y))]);
 		} else {
