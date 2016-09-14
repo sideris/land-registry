@@ -34,7 +34,7 @@
 			if (e) throw e;
 			let startD 	= dates.date_limits[0],
 				endD	= dates.date_limits[1];
-			let postCode = 'CAMBRIDGE';
+			let postCode = 'N1 7JQ';
 {#			PE29 1WX#}
 			$('#dates').daterangepicker({
 				locale: {
@@ -45,9 +45,10 @@
 				maxDate:endD,
 				minDate:startD,
 			}, (start, end, label) => {
-				console.log(start.format(plentific.date.format), end.format(plentific.date.format), label);
+				startD = start.format(plentific.date.format);
+				endD = end.format(plentific.date.format)
 			});
-			plentific.ajax.get(`/properties?from=${startD}&to=1996-01-01&postcode=${postCode}`, function(error, data){
+			plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 				if(error) throw error;
 				if (data.length === 0)
 					plentific.view.showMessage('No data. Pick other range or postcode');
@@ -57,8 +58,17 @@
 				typesGraph.call();
 			});
 
-		})
-
+			$('#search').click(function() {
+				let postCode = $('#postcode').val();
+				plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
+					if(error) throw error;
+					if (data.length === 0)
+						plentific.view.showMessage('No data. Pick other range or postcode');
+					priceGraph.updateDataset(data);
+					typesGraph.updateDataset(data);
+				});
+			})
+		});
 	})
 </script>
 {% endblock %}

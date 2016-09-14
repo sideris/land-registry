@@ -7,16 +7,16 @@ let PriceBracketsView = function(container, data) {
 	let svg;
 	let datum;
 	let graph;
-
-	let width 	= 1024 * 2,
-		height	= 768;
+	let bars;
+	const 	width = 1024 * 2,
+			height	= 768;
 	let nBrackets = 8;
-	let margin = {top: 20, right: 20, bottom: 40, left: 100};
+	const margin = {top: 20, right: 20, bottom: 40, left: 100};
 
 	let x = d3.scale.linear().range([0, width]).domain([0, nBrackets - 1]),
 		y2 = d3.scale.linear().range([height, 0]),
 		y = d3.scale.linear().range([0, height]);
-	let xAxis = d3.svg.axis()
+	const xAxis = d3.svg.axis()
 					.scale(x)
 					.orient("bottom")
 					.ticks(nBrackets)
@@ -24,12 +24,12 @@ let PriceBracketsView = function(container, data) {
 						let p1 = i === 0 ? '0' : Math.round(Math.ceil(bracketScale(i-1)));
 						let p2 = i === nBrackets - 1 ? ' and over' :  ' - ' + Math.round(Math.ceil(bracketScale(i)));
 						return p1 + p2;});
-	let yAxis = d3.svg.axis().scale(y2)
+	const yAxis = d3.svg.axis().scale(y2)
 					.orient("left")
 					.ticks(5).tickFormat(d3.format("d"));
 	let bracketScale;
 	let noData = false;
-	var div = d3.select("body").append("div")
+	const div = d3.select("body").append("div")
 		.attr("class", "tooltip")
 		.style("opacity", 0);
 
@@ -59,8 +59,8 @@ let PriceBracketsView = function(container, data) {
 	 */
 	function updateGraph() {
 		if ( noData === false ) {
-			let barW =  x(1) - x(0) - 1;
-			graph.selectAll("bar")
+			const barW =  x(1) - x(0) - 1;
+			bars = graph.selectAll(".bar")
 				.data(datum)
 				.enter().append("rect")
 				.style("fill", "#99badd")
@@ -127,6 +127,8 @@ let PriceBracketsView = function(container, data) {
 	 */
 	this.updateDataset = function(dataset) {
 		data = dataset;
+		bars.remove();
+		graph.selectAll('.axis').remove();
 		parseData();
 		updateGraph();
 	};

@@ -91,7 +91,7 @@ class Property(models.Model):
         result = []
         low = dateranges['min']
         high = dateranges['max']
-        props = Property.objects.prefetch_related('transactions').filter(town=postcode,
+        props = Property.objects.prefetch_related('transactions').filter(postcode=postcode,
                                                                          transactions__transfer_date__range=[low, high])
         for p in props:
             # print p.to_json()['postcode'], p.to_json()['paon_saon'], p.to_json()['street']

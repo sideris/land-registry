@@ -49,7 +49,7 @@ let PropertyTypesView = function(container, data) {
 		if ( noData === false ) {
 
 			let ptypes = graph
-				.selectAll("property-type")
+				.selectAll(".property-type")
 				.data(datum)
 				.enter().append("g")
 					.attr("class", "property-type");
@@ -116,6 +116,8 @@ let PropertyTypesView = function(container, data) {
 	 */
 	this.updateDataset = function(dataset) {
 		data = dataset;
+		graph.selectAll('.axis').remove();
+		d3.selectAll('.property-type').remove();
 		parseData();
 		updateGraph();
 	};
