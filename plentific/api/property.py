@@ -16,7 +16,7 @@ def postcode_suggest(request, search_term=None):
     """
     result = []
     if search_term:
-        qs = Property.objects.values('postcode').filter(Q(postcode__icontains=search_term)).distinct()
+        qs = Property.objects.values('postcode').filter(Q(postcode__icontains=search_term)).distinct()[:10]
         result = map(lambda x: x['postcode'], qs)
     return json_response(result)
 

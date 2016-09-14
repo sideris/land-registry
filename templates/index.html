@@ -3,7 +3,9 @@
 		<div class="controls row" class="col-md-12">
 			<div class="col-md-4">
 				<label for="dates">Select postcode
-				<input id="postcode" name="postcode" value="N1 7JQ" class="form-control" placeholder="Post Code" type="text"/></label>
+				<input id="postcode" list="codes" name="postcode" value="N1 7JQ" class="form-control" placeholder="Post Code" type="text"/></label>
+				<datalist id="codes">
+				</datalist>
 			</div>
 			<div class="col-md-3 col-md-offset-1">
 				<button id="search" class="btn btn-primary">Search</button>
@@ -59,7 +61,7 @@
 			});
 
 			$('#search').click(function() {
-				let postCode = $('#postcode').val();
+				let postCode = $('#postcode').val().toUpperCase();
 				plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 					if(error) throw error;
 					if (data.length === 0)
@@ -67,6 +69,16 @@
 					priceGraph.updateDataset(data);
 					typesGraph.updateDataset(data);
 				});
+			});
+
+			$('#postcode').on('change', function() {
+				let v = $(this).val().toUpperCase();
+				if(v.length >= 3) {
+					plentific.ajax.get(`/postcode/${v}/`, function(e, d){
+						$('#codes').html('');
+						d.forEach((d) => $('#codes').append(`<option>${d}</option>`))
+					})
+				}
 			})
 		});
 	})
