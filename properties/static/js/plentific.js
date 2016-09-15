@@ -2,7 +2,8 @@ let plentific = {
 	svg: {},
 	ajax: {},
 	date: {},
-	view: {}
+	view: {},
+	utils: {}
 };
 
 plentific.date.format = 'YYYY-MM-DD';
@@ -26,6 +27,30 @@ plentific.view.showMessage = function(msg='', cl='error', duration=2000) {
 	$('#message').html(msg).addClass(cl).fadeIn(duration, function () {
 		$(this).fadeOut(duration/3)
 	});
+};
+
+/**
+ * Removes all outliers that are 3 std from the mean
+ * @param arr The sorted value array
+ */
+plentific.utils.removeOutliers = function(arr) {
+	let sum=0,
+		sumsq = 0; // stores sum of squares
+	let l = arr.length;
+	for(var i=0;i<l;++i) {
+		sum		+=arr[i];
+		sumsq	+=arr[i] * arr[i];
+	}
+	let mean 		= sum / l;
+	let variance 	= sumsq / l - mean * mean;
+	let sd 			= Math.sqrt(variance);
+
+	let data3 = [];
+	for(let i=0;i<l;++i) {
+		if(arr[i] > mean - 3 *sd && arr[i] < mean + 3 * sd)
+			data3.push(arr[i]);
+	}
+	return data3;
 };
 
 // class PlentificView {

@@ -100,10 +100,9 @@ let PriceBracketsView = function(container, data) {
 	 * Parses the data to create appropriate dataset for this graph
 	 */
 	function parseData() {
-		let salePrices = [].concat.apply([], data.map(x =>
-												x.transactions.map(y => y.price)));
+		let salePrices = [].concat.apply([], data.map(x =>x.transactions.map(y => y.price)));
 		salePrices = salePrices.sort((a,b) => a - b);
-		let clean = removeOutliers(salePrices);
+		let clean = plentific.utils.removeOutliers(salePrices);
 		// console.log(salePrices)
 		// console.log(data)
 		if (clean.length > 0 ) {
@@ -122,29 +121,6 @@ let PriceBracketsView = function(container, data) {
 		}
 	}
 
-	/**
-	 * Removes all outliers that are 3 std from the mean
-	 * @param arr The sorted value array
-	 */
-	function removeOutliers (arr) {
-		let sum=0,
-			sumsq = 0; // stores sum of squares
-		let l = arr.length;
-		for(var i=0;i<l;++i) {
-			sum		+=arr[i];
-			sumsq	+=arr[i] * arr[i];
-		}
-		let mean 		= sum / l;
-		let variance 	= sumsq / l - mean * mean;
-		let sd 			= Math.sqrt(variance);
-
-		let data3 = [];
-		for(let i=0;i<l;++i) {
-			if(arr[i] > mean - 3 *sd && arr[i] < mean + 3 * sd)
-				data3.push(arr[i]);
-		}
-		return data3;
-	}
 
 	/**
 	 * Updates the dataset and the graph
