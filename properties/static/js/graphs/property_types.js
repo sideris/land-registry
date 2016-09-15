@@ -83,48 +83,60 @@ let PropertyTypesView = function(container, data) {
 	 * Parses the data to create appropriate dataset for this graph
 	 */
 	function parseData() {
-		// console.log(data)
 		startDate	= new Date("2200");
 		endDate 	= new Date("1900");
 		let byType = {};
 		let minY = 10000000000, maxY = 0;
 		datum = [];
+		let outliers;
 		for(let key of Object.keys(typeMap)) {
-			byType[key] = [].concat
-				.apply([], data.filter(x => x.property_type === key)
-								.map(x => x.transactions))
-				.map(x => {
-					minY = x.price < minY ? x.price : minY;
-					maxY = x.price > maxY ? x.price : maxY;
-					return { price: x.price, date: moment(x.transfer_date).toDate()};
-				})
-				.sort((a, b) => +(a.date) - +(b.date));
+			byType[key] = []
+							.concat.apply([], data
+											.filter(x => x.property_type === key).map(x => x.transactions))
+											.map(x => {
+												minY = x.price < minY ? x.price : minY;
+												maxY = x.price > maxY ? x.price : maxY;
+												return { price: x.price, date: moment(x.transfer_date).toDate()};})
+											.sort((a, b) => +(a.date) - +(b.date));
+			let l = byType[key].length;
+			// find the mean
 			let avg;
-			if(byType[key].length > 0) {
+			if(l > 0) {
+				let prices = [].concat.apply([], byType[key].map(x=> x.price)).sort((a,b) => a-b);
+				outliers = plentific.utils.getOutliers(prices, 2);
+				let nextMonth = moment(byType[key][0].date).add(1, 'months').set('date', 1).toDate();
 				startDate = +(byType[key][0].date) < +startDate ? byType[key][0].date : startDate;
-				endDate = +(byType[key][byType[key].length - 1].date) > +endDate ? byType[key][byType[key].length - 1].date : endDate;
+				endDate = +(byType[key][l - 1].date) > +endDate ? byType[key][l - 1].date : endDate;
 				let sum = 0;
-				// byType[key].reduce((a, b) => a.price + b.price);
-				byType[key].forEach(x => sum+=x.price);
-				avg = sum / byType[key].length;
+				let c = 0;
+				for(let i=0; i < l; i++) {
+					if(outliers.indexOf(byType[key].price) > -1) continue;
+					if( +byType[key][i].date >  +nextMonth) {
+						sum = 0;
+						nextMonth = moment(nextMonth).add(1, 'months').toDate();
+						c =0;
+					}
+					c++;
+					sum += byType[key][i].price
+				}
+				avg = sum / c;
 			}
-			datum.push( {label: typeMap[key], values: byType[key], mean: avg} )
+			datum.push( {label: typeMap[key], values: byType[key].filter(x=> outliers.indexOf(x.price) === -1), mean: avg} )
 		}
+		// make datum
 		datum.forEach(function(d){
 			d.fixed = [];
 			for(let i=0; i<d.values.length;i++) {
-				d.fixed.push({
-					date: d.values[i].date,
-					price:  100 * d.values[i].price / d.mean
-				})
+				let price = outliers.indexOf(d.values[i].price) > - 1 ? 0 : 100 * d.values[i].price / d.mean;
+				d.fixed.push({date: d.values[i].date, price:  price});
 			}
 		});
-		var normalizedYMax = Math.max.apply( Math, [].concat.apply([], datum.map(x=> x.fixed.map(y=>y.price))))
-		y.domain([0, Math.max(normalizedYMax * 1.2, 200)]);
+		var normalizedYMax = Math.max.apply( Math, [].concat.apply([], datum.map(x=> x.fixed.map(y=>y.price))));
+
+		y.domain([0, normalizedYMax]);
 		x.domain([startDate, endDate]);
 		graph.select('.x.axis').transition().duration(1500).ease("sin-in-out").call(xAxis);
 		graph.select('.y.axis').transition().duration(1500).ease("sin-in-out").call(yAxis);
-		// console.log(byType)
 	}
 
 	/**
@@ -138,7 +150,6 @@ let PropertyTypesView = function(container, data) {
 		parseData();
 		updateGraph();
 	};
-
 
 
 	/**

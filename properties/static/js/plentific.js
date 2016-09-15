@@ -53,6 +53,30 @@ plentific.utils.removeOutliers = function(arr) {
 	return data3;
 };
 
+/**
+ * Gets all outliers that are 3 std from the mean
+ * @param arr The sorted value array
+ */
+plentific.utils.getOutliers = function(arr, sigma=3) {
+	let sum=0,
+		sumsq = 0; // stores sum of squares
+	let l = arr.length;
+	for(var i=0;i<l;++i) {
+		sum		+=arr[i];
+		sumsq	+=arr[i] * arr[i];
+	}
+	let mean 		= sum / l;
+	let variance 	= sumsq / l - mean * mean;
+	let sd 			= Math.sqrt(variance);
+
+	let outliers = [];
+	for(let i=0;i<l;++i) {
+		if(arr[i] <= mean - sigma *sd || arr[i] >= mean + sigma * sd)
+			outliers.push(arr[i]);
+	}
+	return outliers;
+};
+
 // class PlentificView {
 //
 // 	constructor(container, data) {
