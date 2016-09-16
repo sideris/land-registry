@@ -1,4 +1,4 @@
-"""plentific URL Configuration
+"""register URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from plentific.api.property import get_property_list_date_location, postcode_suggest, date_limits
+from register.api.property import get_property_list_date_location, postcode_suggest, date_limits
 from properties.views import View
 
 urlpatterns = [

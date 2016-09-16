@@ -21,7 +21,7 @@ else
   echo "Wrong parameter. To setup postgres try `setdb`"
 fi
 
-mkvirtualenv plentific
+mkvirtualenv register
 pip install -r requirements.txt
 
 python manage.py migrate
@@ -36,7 +36,7 @@ function setup_postgres
     \password postgres
     test
     test
-    create database plentific;
+    create database register;
     \q
 
 }   # end of system_info

@@ -1,8 +1,6 @@
-# Plentific land registry app
+# UK Land registry app
 
-This is a sample application for Plentific by Petros G. Sideris
-
-We use d3.js to provide the graphs and Django with Postgres 9.5 for the 
+D3.js is used to provide the graphs and Django with Postgres 9.5 for the 
 backend
 
 If you haven't setup the Postgres service one needs python-devel and the

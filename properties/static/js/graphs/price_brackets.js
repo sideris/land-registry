@@ -1,7 +1,3 @@
-// class PriceBracketsView extends PlentificView {
-//
-// }
-
 
 let PriceBracketsView = function(container, data) {
 	let svg;
@@ -41,14 +37,14 @@ let PriceBracketsView = function(container, data) {
 						.append("svg")
 							.attr({'width':'100%', 'height': '100%'})
 							.attr("preserveAspectRatio", "xMidYMid meet")
-							.attr("viewBox", plentific.svg.viewBox(	0, 0,
+							.attr("viewBox", register.svg.viewBox(	0, 0,
 																	width + margin.left * 4, height + margin.top * 2))
 							.classed("svg-content", true)
 						.append('g')
 							.attr({'width':'100%', 'height': '100%'});
 		graph = d3.select(container).select('svg.svg-content').select('g');
 		graph.classed(container.replace('#','') + '-graph', true);
-		graph.attr('transform', plentific.svg.translate(margin.left, margin.top));
+		graph.attr('transform', register.svg.translate(margin.left, margin.top));
 		graph.append("g").classed("background", true)
 			.append("rect")
 			.attr({width: width, height: height});
@@ -83,16 +79,16 @@ let PriceBracketsView = function(container, data) {
 				});
 			graph.append("g")
 				.attr("class", "x axis")
-				.attr("transform", plentific.svg.translate(0, height))
+				.attr("transform", register.svg.translate(0, height))
 				.call(xAxis);
 			graph.append("g")
 				.attr("class", "y axis")
-				.attr("transform", plentific.svg.translate(0, 0))
+				.attr("transform", register.svg.translate(0, 0))
 				.call(yAxis);
 
 			graph.select('.x.axis')
 				.selectAll('.tick')
-				.attr('transform', i => plentific.svg.translate(barW * (i - 0.5), 0))
+				.attr('transform', i => register.svg.translate(barW * (i - 0.5), 0))
 		}
 	}
 
@@ -102,7 +98,7 @@ let PriceBracketsView = function(container, data) {
 	function parseData() {
 		let salePrices = [].concat.apply([], data.map(x =>x.transactions.map(y => y.price)));
 		salePrices = salePrices.sort((a,b) => a - b);
-		let clean = plentific.utils.removeOutliers(salePrices);
+		let clean = register.utils.removeOutliers(salePrices);
 		// console.log(salePrices)
 		// console.log(data)
 		if (clean.length > 0 ) {

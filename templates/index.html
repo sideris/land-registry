@@ -32,7 +32,7 @@
 	$(document).ready(function(){
 		let priceGraph, typesGraph;
 		// maybe use Promise if we need to chain more
-		plentific.ajax.get('/date_limits', function (e, dates) {
+		register.ajax.get('/date_limits', function (e, dates) {
 			if (e) throw e;
 			let startD 	= dates.date_limits[0],
 				endD	= dates.date_limits[1];
@@ -47,13 +47,13 @@
 				maxDate:endD,
 				minDate:startD,
 			}, (start, end, label) => {
-				startD = start.format(plentific.date.format);
-				endD = end.format(plentific.date.format)
+				startD = start.format(register.date.format);
+				endD = end.format(register.date.format)
 			});
-			plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
+			register.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 				if(error) throw error;
 				if (data.length === 0)
-					plentific.view.showMessage('No data. Pick other range or postcode');
+					register.view.showMessage('No data. Pick other range or postcode');
 				priceGraph = new PriceBracketsView('#price_brackets_container', data);
 				priceGraph.call();
 				typesGraph = new PropertyTypesView('#property_types_container', data);
@@ -65,11 +65,11 @@
 				$('#loading').show();
 				$b.attr('disabled', 'disabled').html('Please wait');
 				let postCode = $('#postcode').val().toUpperCase();
-				plentific.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
+				register.ajax.get(`/properties?from=${startD}&to=${endD}&postcode=${postCode}`, function(error, data){
 					if(error) throw error;
 					$('#loading').hide();
 					if (data.length === 0)
-						plentific.view.showMessage('No data. Pick other range or postcode');
+						register.view.showMessage('No data. Pick other range or postcode');
 					priceGraph.updateDataset(data);
 					typesGraph.updateDataset(data);
 					$b.attr('disabled', false).html('Search');

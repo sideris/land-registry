@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 
-from plentific.api.utils import json_response
+from register.api.utils import json_response
 from properties.models import Property, Transaction
 
 

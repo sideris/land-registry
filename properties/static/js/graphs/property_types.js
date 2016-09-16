@@ -29,14 +29,14 @@ let PropertyTypesView = function(container, data) {
 						.append("svg")
 							.attr({'width':'100%', 'height': '100%'})
 							.attr("preserveAspectRatio", "xMidYMid meet")
-							.attr("viewBox", plentific.svg.viewBox(	0, 0,
+							.attr("viewBox", register.svg.viewBox(	0, 0,
 																	width + margin.left * 4, height + margin.top * 2))
 							.classed("svg-content", true)
 						.append('g')
 							.attr({'width':'100%', 'height': '100%'});
 		graph = d3.select(container).select('svg.svg-content').select('g');
 		graph.classed(container.replace('#','') + '-graph', true);
-		graph.attr('transform', plentific.svg.translate(margin.left, margin.top));
+		graph.attr('transform', register.svg.translate(margin.left, margin.top));
 		graph.append("g").classed("background", true)
 			.append("rect")
 			.attr({width: width, height: height});
@@ -70,11 +70,11 @@ let PropertyTypesView = function(container, data) {
 
 			graph.append("g")
 				.attr("class", "x axis")
-				.attr("transform", plentific.svg.translate(0, height))
+				.attr("transform", register.svg.translate(0, height))
 				.call(xAxis);
 			graph.append("g")
 				.attr("class", "y axis")
-				.attr("transform", plentific.svg.translate(0, 0))
+				.attr("transform", register.svg.translate(0, 0))
 				.call(yAxis);
 		}
 	}
@@ -103,7 +103,7 @@ let PropertyTypesView = function(container, data) {
 			let avg;
 			if(l > 0) {
 				let prices = [].concat.apply([], byType[key].map(x=> x.price)).sort((a,b) => a-b);
-				outliers = plentific.utils.getOutliers(prices, 2);
+				outliers = register.utils.getOutliers(prices, 2);
 				let nextMonth = moment(byType[key][0].date).add(1, 'months').set('date', 1).toDate();
 				startDate = +(byType[key][0].date) < +startDate ? byType[key][0].date : startDate;
 				endDate = +(byType[key][l - 1].date) > +endDate ? byType[key][l - 1].date : endDate;
